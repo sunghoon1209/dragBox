@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    *{margin: 0;padding: 0;}
+    .container{width: 400px;height: 200px;background-color: #000; margin: 0 auto; display: flex;justify-content: center;align-items: center; position: relative;}
+    .container span {color:#fff}
+    .container .grab{position: absolute;background-color: #fff;width: 6px;height: 18px;}
+    #grab_left{left:0;border-top-left-radius:2px; border-bottom-left-radius: 2px;}
+    #grab_right{right:0;border-top-right-radius:2px; border-bottom-right-radius: 2px;}
+</style>
+<body>
+    <div class="container">        
+        <span>드래그 시작</span>
+        <div class="grab" id="grab_left"></div>
+        <div class="grab" id="grab_right"></div>        
+    </div>
+
+
+    <script>
+        const grab = document.querySelectorAll('.grab');
+        let x;
+        let dragX;
+        let isDown = false;
+        const container = document.querySelector('.container');
+        let currentWidth;
+
+
+        grab.forEach(function (item) {
+            item.addEventListener('mousedown', function (event) {
+                currentWidth = container.offsetWidth;
+                // console.log(currentWidth);    
+                x = event.clientX;
+                isDown = true;    
+                document.currentGrab = this;
+            });
+        });    
+
+        window.addEventListener('mousemove', function (event) {
+            if (!isDown || !document.currentGrab) return;    
+            const grabSide = document.currentGrab.id.split('_')[1];
+            if (grabSide == 'left') {
+                textChange('왼쪽 드래그');
+                dragX = event.clientX;             
+                let changeWidth = dragX - x;
+                let containerChangeWidth = currentWidth - changeWidth;
+                // console.log(containerChangeWidth);
+                container.style.width=`${containerChangeWidth}px`;
+                
+            } else if (grabSide == 'right') {
+                textChange('오른쪽 드래그');
+                dragX = event.clientX;             
+                let changeWidth = dragX - x;
+                let containerChangeWidth = currentWidth + changeWidth;
+                // console.log(containerChangeWidth);
+                container.style.width=`${containerChangeWidth}px`;
+            }
+              
+        });
+    
+        window.addEventListener('mouseup', function () {
+            if (!isDown) return;
+            isDown = false;
+            document.currentGrab = null; 
+            textChange('드래그 시작');
+        });
+    
+        function textChange(text) {
+            document.querySelector('.container span').textContent = text;
+        };
+    </script>
+    
+</body>
+</html>
